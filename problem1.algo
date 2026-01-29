@@ -1,0 +1,55 @@
+ALGORITHM Sum_Distinct_Elements_Using_Arrays
+
+VAR
+    A, B: ARRAY_OF INTEGER;         
+    nA, nB: INTEGER;               
+    i, j, k: INTEGER;
+    sum: INTEGER;
+
+// Returns TRUE if value v appears in arr[1..n], otherwise FALSE
+FUNCTION IsIn(arr: ARRAY_OF INTEGER; n: INTEGER; v: INTEGER) : BOOLEAN
+VAR
+    k: INTEGER;
+BEGIN
+    FOR k FROM 1 TO n STEP 1 DO
+        IF (arr[k] = v) THEN
+            RETURN TRUE;
+        END_IF;
+    END_FOR;
+    RETURN FALSE;
+END.
+
+// Returns TRUE if value v already appeared earlier than position idx in arr
+FUNCTION OccursBefore(arr: ARRAY_OF INTEGER; idx: INTEGER; v: INTEGER) : BOOLEAN
+VAR
+    k: INTEGER;
+BEGIN
+    FOR k FROM 1 TO idx - 1 STEP 1 DO
+        IF (arr[k] = v) THEN
+            RETURN TRUE;
+        END_IF;
+    END_FOR;
+    RETURN FALSE;
+END. 
+
+BEGIN
+    // Assume nA, nB and arrays A[1..nA], B[1..nB] are provided (read or predefined)
+    sum := 0;
+
+    // Pass 1: add elements that are in A but not in B (count each value only once)
+    FOR i FROM 1 TO nA STEP 1 DO
+        IF (NOT IsIn(B, nB, A[i]) AND NOT OccursBefore(A, i, A[i])) THEN
+            sum := sum + A[i];
+        END_IF;
+    END_FOR;
+
+    // Pass 2: add elements that are in B but not in A (count each value only once)
+    FOR j FROM 1 TO nB STEP 1 DO
+        IF (NOT IsIn(A, nA, B[j]) AND NOT OccursBefore(B, j, B[j])) THEN
+            sum := sum + B[j];
+        END_IF;
+    END_FOR;
+
+    // Output result
+    Write ("Sum of distinct elements = ", sum);
+END.

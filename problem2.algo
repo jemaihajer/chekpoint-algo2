@@ -1,0 +1,90 @@
+// PROCEDURE version (uses pass-by-reference for the result)
+PROCEDURE dot_product(v1: ARRAY_OF FLOAT; v2: ARRAY_OF FLOAT; n: INTEGER; REF ps: FLOAT)
+VAR
+    k: INTEGER;
+BEGIN
+    ps := 0;
+    FOR k FROM 1 TO n STEP 1 DO
+        ps := ps + v1[k] * v2[k];
+    END_FOR;
+END.
+
+// Algorithm that determines orthogonality for t pairs, calling the PROCEDURE above
+ALGORITHM Orthogonality_Check_Using_Procedure
+VAR
+    t, p, n, i: INTEGER;
+    v1, v2: ARRAY_OF FLOAT;
+    ps: FLOAT;
+    EPS: FLOAT;
+BEGIN
+    // EPS helps compare floating point results to zero
+    EPS := 1E-9;
+
+    // Read number of vector pairs
+    Read (t);
+
+    FOR p FROM 1 TO t STEP 1 DO
+        // Read dimension and the two vectors
+        Read (n);
+        // Read v1[1..n]
+        FOR i FROM 1 TO n STEP 1 DO
+            Read (v1[i]);
+        END_FOR;
+        // Read v2[1..n]
+        FOR i FROM 1 TO n STEP 1 DO
+            Read (v2[i]);
+        END_FOR;
+
+        // Call procedure (ps is an OUT parameter via REF)
+        CALL (dot_product(v1, v2, n, REF ps));
+
+        IF ABS(ps) <= EPS THEN
+            Write ("Pair ", p, ": orthogonal");
+        ELSE
+            Write ("Pair ", p, ": not orthogonal (dot = ", ps, ")");
+        END_IF;
+    END_FOR;
+END.
+
+// FUNCTION version (returns the scalar instead of using an OUT parameter)
+FUNCTION dot_product_f(v1: ARRAY_OF FLOAT; v2: ARRAY_OF FLOAT; n: INTEGER) : FLOAT
+VAR
+    k: INTEGER;
+    s: FLOAT;
+BEGIN
+    s := 0;
+    FOR k FROM 1 TO n STEP 1 DO
+        s := s + v1[k] * v2[k];
+    END_FOR;
+    RETURN s;
+END.
+
+// Modified algorithm using the FUNCTION version
+ALGORITHM Orthogonality_Check_Using_Function
+VAR
+    t, p, n, i: INTEGER;
+    v1, v2: ARRAY_OF FLOAT;
+    dp: FLOAT;
+    EPS: FLOAT;
+BEGIN
+    EPS := 1E-9;
+    Read (t);
+    FOR p FROM 1 TO t STEP 1 DO
+        Read (n);
+        FOR i FROM 1 TO n STEP 1 DO
+            Read (v1[i]);
+        END_FOR;
+        FOR i FROM 1 TO n STEP 1 DO
+            Read (v2[i]);
+        END_FOR;
+
+        dp := dot_product_f(v1, v2, n);
+
+        IF ABS(dp) <= EPS THEN
+            Write ("Pair ", p, ": orthogonal");
+        ELSE
+            Write ("Pair ", p, ": not orthogonal (dot = ", dp, ")");
+        END_IF;
+    END_FOR;
+END.
+
